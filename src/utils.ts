@@ -6,6 +6,7 @@ const SummaryPrompt = `
 
     Along with this, you need to provide a "curation score" for the case to indicate the quality and substance of the case.
     The curation score should be an integer between 0 and 100, and will help determine if the case is worth covering.
+    We want to cover cases of substance, are executed professionally, and are important to the public interest, such as those involving corporate misconduct, government corruption, or civil rights.
 
     Your output should be in JSON format, as follows:
     {
