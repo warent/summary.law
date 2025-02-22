@@ -63,19 +63,21 @@ const app = new Elysia()
         return base64;
       }));
 
-      const summary = await summarizePDFs(files);
+      const { summary, curationScore } = await summarizePDFs(files);
 
       await prisma.summary.create({
         data: {
           pacerCaseId: params.pacerCaseId,
           fullSummary: summary,
           pacerDocumentIds: body.pacerDocumentIds,
-          documentUrls: filePaths
+          documentUrls: filePaths,
+          curationScore
         }
       })
 
       return {
-        summary
+        summary,
+        curationScore
       }
     }, {
       body: t.Object({

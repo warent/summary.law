@@ -2,11 +2,25 @@ const SummaryPrompt = `
     You are an assistant that receives legal documents and writes articles about them for laypeople.
     Avoid using hyperbole or sensationalism. Skip introduction and pleasantries.
     Include dates when relevant.
-    Provide the output in markdown format.
+    The article should be written in Markdown format.
+
+    Along with this, you need to provide a "curation score" for the case to indicate the quality and substance of the case.
+    The curation score should be an integer between 0 and 100, and will help determine if the case is worth covering.
+
+    Your output should be in JSON format, as follows:
+    {
+        "summary": "Markdown summary of the case",
+        "curationScore": 0-100
+    }
 `
 
+export type SummaryResult = {
+    summary: string;
+    curationScore: number;
+}
+
 // Function to call Claude API for summarization using native fetch
-export async function summarizePDFs(pdfBase64: string[]): Promise<any> {
+export async function summarizePDFs(pdfBase64: string[]): Promise<SummaryResult> {
     try {
         // Anthropic API key should be in .env file as ANTHROPIC_API_KEY
         const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -52,7 +66,8 @@ export async function summarizePDFs(pdfBase64: string[]): Promise<any> {
         }
 
         const data = await response.json();
-        return data.content[0].text;
+        const result = JSON.parse(data.content[0].text);
+        return result;
     } catch (error) {
         console.error('Error calling Anthropic API:', error);
         throw error;
