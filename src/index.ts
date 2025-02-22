@@ -15,7 +15,29 @@ const app = new Elysia()
       })
       return summary
     })
-    .post("/summary/:pacerCaseId", async ({ params, body }) => {
+    .post("/summary/:pacerCaseId", async ({ params, body, headers, set }) => {
+      // Get the API Key from the authorization header
+      const apiKey = headers.authorization;
+      if (!apiKey) {
+        set.status = 401
+        return {
+          error: "API Key is required"
+        }
+      }
+
+      // Check if the API Key is valid
+      const validApiKey = await prisma.apiKey.findUnique({
+        where: {
+          key: apiKey
+        }
+      })
+      if (!validApiKey) {
+        set.status = 401
+        return {
+          error: "Invalid API Key"
+        }
+      }
+
       const documents = await Promise.all(body.pacerDocumentIds.map(async (pacerDocumentId: string) => {
         const response = await fetch(`${COURTLISTENER_RECAP_DOCUMENT_URL}?pacer_doc_id=${pacerDocumentId}`, {
           headers: {
