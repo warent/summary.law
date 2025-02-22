@@ -6,7 +6,7 @@ const COURTLISTENER_RECAP_DOCUMENT_URL = "https://www.courtlistener.com/api/rest
 const COURTLISTENER_STORAGE_URL = "https://storage.courtlistener.com/";
 
 const app = new Elysia()
-  .group("/v1", app => app
+  .group("/api/v1", app => app
     .get("/summary/:pacerCaseId", async ({ params }) => {
       const summary = await prisma.summary.findMany({
         where: {
