@@ -9,10 +9,11 @@ datasource db {
 
 model Summary {
     id String @id @default(uuid())
+    docketId Int
     pacerCaseId String
+    pacerDocumentIds String[]
     fullSummary String
     shortSummary String
-    sourceDocuments String[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
