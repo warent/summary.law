@@ -2,9 +2,9 @@
 CREATE TABLE "Summary" (
     "id" TEXT NOT NULL,
     "pacerCaseId" TEXT NOT NULL,
-    "fullSummary" TEXT NOT NULL,
-    "shortSummary" TEXT NOT NULL,
-    "sourceDocuments" TEXT[],
+    "pacerDocumentIds" TEXT[],
+    "fullSummary" TEXT,
+    "shortSummary" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

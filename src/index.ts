@@ -7,21 +7,15 @@ const COURTLISTENER_STORAGE_URL = "https://storage.courtlistener.com/";
 
 const app = new Elysia()
   .group("/v1", app => app
-    .get("/summary/:docketId", async ({ params }) => {
-      // Validate docketId is a number
-      if (isNaN(Number(params.docketId))) {
-        return {
-          error: "Docket ID must be a number"
-        }
-      }
+    .get("/summary/:pacerCaseId", async ({ params }) => {
       const summary = await prisma.summary.findMany({
         where: {
-          docketId: Number(params.docketId)
+          pacerCaseId: params.pacerCaseId
         }
       })
       return summary
     })
-    .post("/summary/:docketId", async ({ params, body }) => {
+    .post("/summary/:pacerCaseId", async ({ params, body }) => {
       const documents = await Promise.all(body.pacerDocumentIds.map(async (pacerDocumentId: string) => {
         const response = await fetch(`${COURTLISTENER_RECAP_DOCUMENT_URL}?pacer_doc_id=${pacerDocumentId}`, {
           headers: {
@@ -48,7 +42,18 @@ const app = new Elysia()
       }));
 
       const summary = await summarizePDFs(files);
-      return summary;
+
+      await prisma.summary.create({
+        data: {
+          pacerCaseId: params.pacerCaseId,
+          fullSummary: summary,
+          pacerDocumentIds: body.pacerDocumentIds
+        }
+      })
+
+      return {
+        summary
+      }
     }, {
       body: t.Object({
         pacerDocumentIds: t.Array(t.String())

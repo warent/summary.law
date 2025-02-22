@@ -1,5 +1,12 @@
+const SummaryPrompt = `
+    You are an assistant that receives legal documents and writes articles about them for laypeople.
+    Avoid using hyperbole or sensationalism. Skip introduction and pleasantries.
+    Include dates when relevant.
+    Provide the output in markdown format.
+`
+
 // Function to call Claude API for summarization using native fetch
-export async function summarizePDFs(pdfBase64: string[]): Promise<string> {
+export async function summarizePDFs(pdfBase64: string[]): Promise<any> {
     try {
         // Anthropic API key should be in .env file as ANTHROPIC_API_KEY
         const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -24,7 +31,7 @@ export async function summarizePDFs(pdfBase64: string[]): Promise<string> {
                         content: [
                             {
                                 type: 'text',
-                                text: 'Please provide a concise summary of the key points in this PDF.'
+                                text: SummaryPrompt
                             },
                         ].concat(pdfBase64.map(pdf => ({
                             type: 'document',
@@ -50,4 +57,12 @@ export async function summarizePDFs(pdfBase64: string[]): Promise<string> {
         console.error('Error calling Anthropic API:', error);
         throw error;
     }
+}
+
+// Add TypeScript interface for the return type
+export interface DocumentSummary {
+    summary: string;
+    keyPoints: string[];
+    parties: string[];
+    dates: string[];
 }
