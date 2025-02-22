@@ -11,6 +11,7 @@ model Summary {
     id String @id @default(uuid())
     pacerCaseId String
     pacerDocumentIds String[]
+    documentUrls String[]
     fullSummary String?
     shortSummary String?
     createdAt DateTime @default(now())

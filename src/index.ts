@@ -27,11 +27,11 @@ const app = new Elysia()
 
       const filePaths: string[] = documents
         .flatMap((document: any) => document.results)
-        .map((doc: any) => doc.filepath_local)
+        .map((doc: any) => `${COURTLISTENER_STORAGE_URL}${doc.filepath_local}`)
         .filter(Boolean);
 
       const files = await Promise.all(filePaths.map(async (filePath: string) => {
-        const fileResponse = await fetch(`${COURTLISTENER_STORAGE_URL}${filePath}`, {
+        const fileResponse = await fetch(filePath, {
           headers: {
             'Authorization': `Token ${process.env.COURTLISTENER_API_KEY}`
           }
@@ -47,7 +47,8 @@ const app = new Elysia()
         data: {
           pacerCaseId: params.pacerCaseId,
           fullSummary: summary,
-          pacerDocumentIds: body.pacerDocumentIds
+          pacerDocumentIds: body.pacerDocumentIds,
+          documentUrls: filePaths
         }
       })
 
